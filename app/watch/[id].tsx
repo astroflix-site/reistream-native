@@ -15,6 +15,7 @@ const WatchScreen = () => {
     const [selectedServer, setSelectedServer] = useState<Server | null>(null);
     const [seriesEpisodes, setSeriesEpisodes] = useState<Episode[]>([]);
     const [series, setSeries] = useState<any>(null);
+    const [isServerDropdownOpen, setIsServerDropdownOpen] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -61,22 +62,21 @@ const WatchScreen = () => {
 
     if (!episode || !selectedServer) return null;
 
-    // Get 10 episodes starting from current
+    // Get episodes window (6-7 items)
     const currentIndex = seriesEpisodes.findIndex(ep => ep._id === episode._id);
-    const displayedEpisodes = seriesEpisodes.slice(
-        currentIndex >= 0 ? currentIndex : 0,
-        currentIndex >= 0 ? currentIndex + 10 : 10
-    );
+    const windowSize = 7;
+    const start = Math.max(0, currentIndex - Math.floor(windowSize / 2));
+    const displayedEpisodes = seriesEpisodes.slice(start, start + windowSize);
 
     return (
         <View className="flex-1 bg-black">
             <Stack.Screen options={{
                 headerShown: false,
-                orientation: 'all' // Support landscape
+                orientation: 'all'
             }} />
 
             {/* Video Container with Header Overlay */}
-            <View className="relative w-full aspect-video bg-gray-950">
+            <View className="relative w-full h-64 mt-12 bg-gray-950">
                 <WebView
                     source={{ uri: selectedServer.url }}
                     className="flex-1"
@@ -92,7 +92,7 @@ const WatchScreen = () => {
                 />
 
                 {/* Absolute Header Overlay */}
-                <View className="absolute top-0 left-0 right-0 p-4 pt-8 bg-black/40 flex-row items-center">
+                <View className="absolute top-0 left-0 right-0 p-4 flex-row items-center bg-gradient-to-b from-black/60 to-transparent">
                     <TouchableOpacity
                         onPress={() => router.back()}
                         className="w-10 h-10 items-center justify-center bg-black/40 rounded-full"
@@ -100,10 +100,10 @@ const WatchScreen = () => {
                         <ChevronLeft size={24} color="white" />
                     </TouchableOpacity>
                     <View className="ml-4 flex-1">
-                        <Text className="text-white text-base font-bold truncate" numberOfLines={1}>
+                        <Text className="text-white text-base font-bold truncate shadow-lg" numberOfLines={1}>
                             {episode.title || `Episode ${episode.episodeNumber}`}
                         </Text>
-                        <Text className="text-gray-300 text-xs">
+                        <Text className="text-gray-200 text-xs shadow-lg">
                             S{episode.season} • E{episode.episodeNumber}
                         </Text>
                     </View>
@@ -111,73 +111,93 @@ const WatchScreen = () => {
             </View>
 
             {/* Content Under Video */}
-            <ScrollView className="flex-1 px-4">
-                {/* Server Selector */}
-                <View className="mt-6">
-                    <Text className="text-white text-xs font-bold mb-3 tracking-widest text-gray-500 uppercase">Select Server</Text>
-                    <View className="flex-row flex-wrap">
-                        {servers.map((server, index) => (
-                            <TouchableOpacity
-                                key={index}
-                                onPress={() => setSelectedServer(server)}
-                                className={`mr-2 mb-2 px-4 py-2 rounded-lg border ${selectedServer.url === server.url
-                                    ? 'bg-red-600 border-red-600'
-                                    : 'bg-gray-900 border-gray-800'
-                                    }`}
-                            >
-                                <Text className={`font-bold text-xs ${selectedServer.url === server.url ? 'text-white' : 'text-gray-400'
-                                    }`}>
-                                    {server.name}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
+            <ScrollView className="flex-1 px-4 mt-4">
+                {/* Server Selector Dropdown */}
+                <View className="mb-6">
+                    <TouchableOpacity
+                        onPress={() => setIsServerDropdownOpen(!isServerDropdownOpen)}
+                        className="flex-row items-center justify-between bg-gray-900 border border-gray-800 p-4 rounded-xl"
+                    >
+                        <View>
+                            <Text className="text-gray-400 text-xs uppercase font-bold tracking-wider mb-1">Current Server</Text>
+                            <Text className="text-white font-bold">{selectedServer.name}</Text>
+                        </View>
+                        <ChevronLeft size={20} color="white" style={{ transform: [{ rotate: isServerDropdownOpen ? '-90deg' : '-90deg' }] }} />
+                    </TouchableOpacity>
+
+                    {isServerDropdownOpen && (
+                        <View className="mt-2 bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+                            {servers.map((server, index) => (
+                                <TouchableOpacity
+                                    key={index}
+                                    onPress={() => {
+                                        setSelectedServer(server);
+                                        setIsServerDropdownOpen(false);
+                                    }}
+                                    className={`p-4 border-b border-gray-800 ${selectedServer.url === server.url ? 'bg-red-600/10' : ''}`}
+                                >
+                                    <Text className={`${selectedServer.url === server.url ? 'text-red-500 font-bold' : 'text-gray-300'}`}>
+                                        {server.name}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    )}
+
+                    <View className="flex-row items-center mt-3 bg-yellow-500/10 p-3 rounded-lg">
+                        <Info size={16} color="#fbbf24" />
+                        <Text className="text-yellow-500 text-xs ml-2 flex-1">
+                            Note: If current server doesn't work, please switch to another one.
+                        </Text>
                     </View>
                 </View>
 
                 {/* Episodes Section - Card Style */}
-                <View className="mt-8 mb-10">
+                <View className="mb-10">
                     <View className="flex-row justify-between items-center mb-4">
-                        <Text className="text-white text-sm font-bold uppercase tracking-wider">Episodes</Text>
-                        <Text className="text-gray-500 text-xs">{seriesEpisodes.length} Total</Text>
+                        <Text className="text-white text-lg font-bold">Episodes</Text>
+                        <Text className="text-gray-500 text-sm font-medium">{seriesEpisodes.length} Episodes</Text>
                     </View>
 
-                    <View className="space-y-3">
+                    <View className="space-y-4">
                         {displayedEpisodes.map((ep) => (
                             <TouchableOpacity
                                 key={ep._id}
                                 onPress={() => router.replace(`/watch/${ep._id}?seriesId=${paramSeriesId || episode.seriesId}`)}
-                                className={`flex-row items-center p-2 rounded-xl border ${ep._id === episode._id
-                                    ? 'bg-red-600/10 border-red-600'
-                                    : 'bg-gray-900/50 border-gray-800'
+                                className={`flex-row items-center bg-gray-900 rounded-xl overflow-hidden border ${ep._id === episode._id
+                                    ? 'border-red-600'
+                                    : 'border-transparent'
                                     }`}
                             >
-                                <View className="relative">
+                                <View className="relative w-32 h-20">
                                     <Image
-                                        source={{ uri: series?.imageURL }}
-                                        className="w-24 h-14 rounded-lg bg-gray-800"
+                                        source={{ uri: series?.imageURL || 'https://via.placeholder.com/150' }}
+                                        className="w-full h-full"
                                         resizeMode="cover"
                                     />
-                                    <View className="absolute bottom-1 right-1 bg-black/60 px-1.5 py-0.5 rounded">
-                                        <Text className="text-white text-[10px] font-bold">E{ep.episodeNumber}</Text>
+                                    <View className="absolute inset-0 bg-black/30" />
+                                    <View className="absolute bottom-1 right-1 bg-black/80 px-2 py-0.5 rounded text-center">
+                                        <Text className="text-white text-[10px] font-bold">EP {ep.episodeNumber}</Text>
                                     </View>
+                                    {ep._id === episode._id && (
+                                        <View className="absolute inset-0 items-center justify-center bg-black/40">
+                                            <View className="bg-red-600 p-1.5 rounded-full">
+                                                <View className="w-2 h-2 bg-white rounded-full" />
+                                            </View>
+                                        </View>
+                                    )}
                                 </View>
-                                <View className="ml-3 flex-1">
-                                    <Text className={`font-bold text-sm truncate ${ep._id === episode._id ? 'text-white' : 'text-gray-300'}`} numberOfLines={1}>
+                                <View className="flex-1 p-3 justify-center">
+                                    <Text className={`font-bold text-base mb-1 ${ep._id === episode._id ? 'text-red-500' : 'text-white'}`} numberOfLines={2}>
                                         {ep.title || `Episode ${ep.episodeNumber}`}
                                     </Text>
-                                    <View className="flex-row items-center mt-1">
-                                        <Text className="text-gray-500 text-xs">Season {ep.season}</Text>
-                                    </View>
+                                    <Text className="text-gray-400 text-xs">
+                                        Season {ep.season}
+                                    </Text>
                                 </View>
                             </TouchableOpacity>
                         ))}
                     </View>
-
-                    {seriesEpisodes.length > displayedEpisodes.length + currentIndex && (
-                        <TouchableOpacity className="mt-4 items-center py-3">
-                            <Text className="text-gray-500 text-xs font-bold uppercase tracking-widest">More episodes below</Text>
-                        </TouchableOpacity>
-                    )}
                 </View>
             </ScrollView>
         </View>

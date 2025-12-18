@@ -140,22 +140,35 @@ const DetailsScreen = () => {
                 {/* Episodes */}
                 <View className="mt-8 mb-10">
                     <Text className="text-white text-lg font-bold mb-4">Episodes</Text>
-                    {episodes.map((ep, index) => (
-                        <TouchableOpacity
-                            key={ep._id}
-                            className="flex-row items-center bg-gray-900/50 p-4 rounded-xl mb-3"
-                            onPress={() => router.push(`/watch/${ep._id}?seriesId=${series._id}`)}
-                        >
-                            <View className="w-10 h-10 bg-gray-800 items-center justify-center rounded-full">
-                                <Text className="text-white font-bold">{index + 1}</Text>
-                            </View>
-                            <View className="flex-1 ml-4">
-                                <Text className="text-white font-semibold" numberOfLines={1}>{ep.title || `Episode ${ep.episodeNumber}`}</Text>
-                                <Text className="text-gray-500 text-xs">Season {ep.season}</Text>
-                            </View>
-                            <Play size={16} color="#FF0000" fill="#FF0000" />
-                        </TouchableOpacity>
-                    ))}
+                    <View className="space-y-4">
+                        {episodes.map((ep) => (
+                            <TouchableOpacity
+                                key={ep._id}
+                                className="flex-row items-center bg-gray-900 rounded-xl overflow-hidden border border-gray-800"
+                                onPress={() => router.push(`/watch/${ep._id}?seriesId=${series._id}`)}
+                            >
+                                <View className="relative w-32 h-20">
+                                    <Image
+                                        source={{ uri: series.imageURL || 'https://via.placeholder.com/150' }}
+                                        className="w-full h-full"
+                                        resizeMode="cover"
+                                    />
+                                    <View className="absolute inset-0 bg-black/30" />
+                                    <View className="absolute bottom-1 right-1 bg-black/80 px-2 py-0.5 rounded text-center">
+                                        <Text className="text-white text-[10px] font-bold">EP {ep.episodeNumber}</Text>
+                                    </View>
+                                </View>
+                                <View className="flex-1 p-3 justify-center">
+                                    <Text className="text-white font-bold text-base mb-1" numberOfLines={2}>
+                                        {ep.title || `Episode ${ep.episodeNumber}`}
+                                    </Text>
+                                    <Text className="text-gray-400 text-xs">
+                                        Season {ep.season}
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
                 </View>
             </View>
         </ScrollView>

@@ -18,13 +18,11 @@ export default function TabLayout() {
         headerTransparent: true,
         headerTitle: () => null,
         headerLeft: () => (
-          <View className="ml-4 p-1 bg-gray-900/80 rounded-xl border border-gray-800">
-            <Image
-              source={require('../../assets/images/logo.png')}
-              style={{ width: 48, height: 48 }}
-              resizeMode="contain"
-            />
-          </View>
+          <Image
+            source={require('../../assets/images/logo.png')}
+            style={{ width: 84, height: 84, marginLeft: 8 }}
+            resizeMode="contain"
+          />
         ),
         headerRight: () => (
           <TouchableOpacity

@@ -44,8 +44,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, []);
 
     const login = async (email: string, password: string) => {
-        const data = await loginUser(email, password);
-        setUser(data.user);
+        try {
+            const data = await loginUser(email, password);
+            console.log("AuthContext: login success via API");
+
+            // If the response itself is the user object (contains _id)
+            if (data && (data._id || data.id)) {
+                // Ensure _id is present (some backends return id)
+                const userObj = {
+                    ...data,
+                    _id: data._id || data.id
+                };
+                setUser(userObj);
+
+                // If we also got a token (handled in api.ts), we can try to refresh user details
+                // to get the cleanest state, but don't unset the user we just got.
+                if (data.token) {
+                    try {
+                        const details = await getUserDetails();
+                        if (details) setUser(details);
+                    } catch (e) {
+                        console.log("AuthContext: secondary user fetch failed, using login data");
+                    }
+                }
+            } else if (data.user) {
+                setUser(data.user);
+            }
+        } catch (error) {
+            console.error("AuthContext: login error", error);
+            throw error;
+        }
     };
 
     const register = async (userData: any) => {
