@@ -36,9 +36,9 @@ export default function BookmarkScreen() {
                 className="px-2 pt-2"
                 showsVerticalScrollIndicator={false}
                 ListHeaderComponent={() => (
-                    <View className="px-2 mb-4">
-                        <Text className="text-white text-2xl font-bold">My Watchlist</Text>
-                        <Text className="text-gray-500 text-sm">Anime you've saved to watch later</Text>
+                    <View className="px-2 mb-6 mt-4 pt-16">
+                        <Text className="text-white text-3xl font-extrabold tracking-tight">My Watchlist</Text>
+                        <Text className="text-gray-400 text-base mt-1">Anime you've saved to watch later</Text>
                     </View>
                 )}
                 ListEmptyComponent={() => (

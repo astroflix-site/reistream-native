@@ -84,12 +84,20 @@ export const getSeries = async (): Promise<Series[]> => {
 
 export const searchSeries = async (query: string): Promise<Series[]> => {
     try {
-        const response = await api.get(`/search-series`, {
-            params: { title: query },
-        });
-        return response.data.series || [];
+        const response = await fetch(`${API_BASE_URL}/search-series?title=${encodeURIComponent(query)}`);
+
+        if (response.status === 404) {
+            return [];
+        }
+
+        if (!response.ok) {
+            throw new Error(`Search failed with status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data.series || [];
     } catch (error) {
-        console.error("Error searching series:", error);
+        console.error("Search API error:", error);
         return [];
     }
 };

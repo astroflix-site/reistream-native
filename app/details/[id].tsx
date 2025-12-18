@@ -2,7 +2,7 @@ import { useWatchlist } from '@/src/hooks/useWatchlist';
 import { getSeriesDetails } from '@/src/services/api';
 import { Episode, Series } from '@/src/types/content';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { Bookmark, Play, Share2, Star } from 'lucide-react-native';
+import { Bookmark, ChevronLeft, Play, Share2, Star } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
@@ -48,7 +48,15 @@ const DetailsScreen = () => {
             <Stack.Screen options={{
                 headerTransparent: true,
                 headerTitle: '',
-                headerTintColor: '#fff'
+                headerTintColor: '#fff',
+                headerLeft: () => (
+                    <TouchableOpacity
+                        onPress={() => router.back()}
+                        className="ml-4 p-2 bg-black/40 rounded-full"
+                    >
+                        <ChevronLeft size={24} color="white" />
+                    </TouchableOpacity>
+                )
             }} />
 
             {/* Backdrop */}
@@ -85,7 +93,7 @@ const DetailsScreen = () => {
                         className="flex-1 bg-red-600 flex-row items-center justify-center py-3 rounded-full"
                         onPress={() => {
                             if (episodes.length > 0) {
-                                router.push(`/watch/${episodes[0]._id}`);
+                                router.push(`/watch/${episodes[0]._id}?seriesId=${series._id}`);
                             }
                         }}
                     >
@@ -93,7 +101,7 @@ const DetailsScreen = () => {
                         <Text className="text-white font-bold ml-2">Watch Now</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        className={`w-12 h-12 items-center justify-center rounded-full ml-3 ${isBookmarked ? 'bg-red-600' : 'bg-gray-800'}`}
+                        className={`w-14 items-center justify-center rounded-full ml-3 ${isBookmarked ? 'bg-red-600' : 'bg-gray-800'}`}
                         onPress={() => {
                             if (series) {
                                 if (isBookmarked) removeFromWatchlist(series._id);
@@ -103,16 +111,13 @@ const DetailsScreen = () => {
                     >
                         <Bookmark size={20} color="white" fill={isBookmarked ? "white" : "none"} />
                     </TouchableOpacity>
-                    <TouchableOpacity className="bg-gray-800 w-12 h-12 items-center justify-center rounded-full ml-3">
-                        <Share2 size={20} color="white" />
-                    </TouchableOpacity>
                 </View>
 
                 {/* Synopsis */}
                 <View className="mt-8">
                     <Text className="text-white text-lg font-bold">Synopsis</Text>
                     <Text className="text-gray-400 mt-2 leading-6">
-                        {series.description}
+                        {series.description ? series.description.replace(/<br\s*\/?>/gi, '\n') : ''}
                     </Text>
                 </View>
 
@@ -139,7 +144,7 @@ const DetailsScreen = () => {
                         <TouchableOpacity
                             key={ep._id}
                             className="flex-row items-center bg-gray-900/50 p-4 rounded-xl mb-3"
-                            onPress={() => router.push(`/watch/${ep._id}`)}
+                            onPress={() => router.push(`/watch/${ep._id}?seriesId=${series._id}`)}
                         >
                             <View className="w-10 h-10 bg-gray-800 items-center justify-center rounded-full">
                                 <Text className="text-white font-bold">{index + 1}</Text>

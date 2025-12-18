@@ -3,9 +3,11 @@ import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
 import { getSeries } from '@/src/services/api';
 import { Series } from '@/src/types/content';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Stack } from 'expo-router';
+import { Play } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Image, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
@@ -53,26 +55,36 @@ export default function HomeScreen() {
 
         {/* Hero Section */}
         {featured && (
-          <View className="relative w-full h-[450px]">
+          <View className="relative w-full h-[500px]">
             <Image
               source={{ uri: featured.backdrop || featured.imageURL }}
               className="w-full h-full"
               resizeMode="cover"
             />
-            <View className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black to-transparent p-4 justify-end">
+            {/* Top Gradient */}
+            <LinearGradient
+              colors={['#000000', 'transparent']}
+              className="absolute top-0 left-0 right-0 h-32"
+            />
+            {/* Bottom Gradient Overlay */}
+            <LinearGradient
+              colors={['transparent', 'rgba(0,0,0,0.8)', '#000000']}
+              className="absolute bottom-0 left-0 right-0 h-1/2 p-4 justify-end"
+            >
               <Text className="text-white text-3xl font-bold">{featured.title}</Text>
-              <Text className="text-gray-300 text-sm mt-2" numberOfLines={2}>
+              <Text className="text-gray-300 text-sm mt-2 font-medium" numberOfLines={2}>
                 {featured.description}
               </Text>
-              <View className="flex-row mt-4">
-                <View className="bg-red-600 px-6 py-2 rounded-full mr-2">
-                  <Text className="text-white font-bold">Watch Now</Text>
-                </View>
-                <View className="bg-gray-800/80 px-6 py-2 rounded-full">
+              <View className="flex-row mt-6 mb-4">
+                <TouchableOpacity className="bg-red-600 px-8 py-3 rounded-full mr-3 flex-row items-center">
+                  <Play size={18} color="white" fill="white" />
+                  <Text className="text-white font-bold ml-2">Watch Now</Text>
+                </TouchableOpacity>
+                <TouchableOpacity className="bg-gray-800/80 px-8 py-3 rounded-full flex-row items-center">
                   <Text className="text-white font-bold">+ Watchlist</Text>
-                </View>
+                </TouchableOpacity>
               </View>
-            </View>
+            </LinearGradient>
           </View>
         )}
 

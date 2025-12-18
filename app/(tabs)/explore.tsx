@@ -52,9 +52,9 @@ export default function ExploreScreen() {
                 className="px-2 pt-2"
                 showsVerticalScrollIndicator={false}
                 ListHeaderComponent={() => (
-                    <View className="px-2 mb-4">
-                        <Text className="text-white text-2xl font-bold">Discover Anime</Text>
-                        <Text className="text-gray-500 text-sm">Explore our entire collection</Text>
+                    <View className="px-2 mb-6 mt-4 pt-16">
+                        <Text className="text-white text-3xl font-extrabold tracking-tight">Discover Anime</Text>
+                        <Text className="text-gray-400 text-base mt-1">Explore our entire collection</Text>
                     </View>
                 )}
             />

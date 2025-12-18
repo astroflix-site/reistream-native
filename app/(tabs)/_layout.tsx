@@ -18,9 +18,13 @@ export default function TabLayout() {
         headerTransparent: true,
         headerTitle: () => null,
         headerLeft: () => (
-          <TouchableOpacity className="ml-4 p-2 bg-black/20 rounded-full">
-            <Menu size={24} color="white" />
-          </TouchableOpacity>
+          <View className="ml-4 p-1 bg-gray-900/80 rounded-xl border border-gray-800">
+            <Image
+              source={require('../../assets/images/logo.png')}
+              style={{ width: 48, height: 48 }}
+              resizeMode="contain"
+            />
+          </View>
         ),
         headerRight: () => (
           <TouchableOpacity
