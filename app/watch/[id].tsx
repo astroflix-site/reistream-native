@@ -4,11 +4,13 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { ChevronLeft, Info } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 
 const WatchScreen = () => {
     const { id, seriesId: paramSeriesId } = useLocalSearchParams();
     const router = useRouter();
+    const insets = useSafeAreaInsets();
     const [episode, setEpisode] = useState<Episode | null>(null);
     const [loading, setLoading] = useState(true);
     const [servers, setServers] = useState<Server[]>([]);
@@ -199,6 +201,8 @@ const WatchScreen = () => {
                         ))}
                     </View>
                 </View>
+                {/* Bottom safe area padding */}
+                <View style={{ height: insets.bottom + 20 }} />
             </ScrollView>
         </View>
     );

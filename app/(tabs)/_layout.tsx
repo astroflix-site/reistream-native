@@ -1,13 +1,14 @@
 import { Tabs, router } from 'expo-router';
-import { Bookmark, Compass, Home, Search, User, Menu } from 'lucide-react-native';
-import { TouchableOpacity, View, Image } from 'react-native';
+import { Bookmark, Compass, Home, Search, User } from 'lucide-react-native';
 import React from 'react';
+import { Image, TouchableOpacity } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useColorScheme } from '@/components/useColorScheme';
-import Colors from '@/constants/Colors';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const insets = useSafeAreaInsets();
 
   return (
     <Tabs
@@ -40,8 +41,8 @@ export default function TabLayout() {
           left: 0,
           right: 0,
           elevation: 0,
-          height: 60,
-          paddingBottom: 10,
+          height: 60 + insets.bottom,
+          paddingBottom: insets.bottom,
         }
       }}>
       <Tabs.Screen

@@ -1,16 +1,17 @@
 import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
-import { Bell, ChevronRight, Info, LogOut, Settings, User as UserIcon, LogIn, UserPlus, X } from 'lucide-react-native';
-import React, { useState } from 'react';
-import { Image, ScrollView, Text, TouchableOpacity, View, Modal, TextInput, ActivityIndicator, Alert } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useAuth } from '../../src/context/AuthContext';
 import { router } from 'expo-router';
+import { Bell, ChevronRight, Info, LogIn, LogOut, Settings, User as UserIcon, UserPlus, X } from 'lucide-react-native';
+import React, { useState } from 'react';
+import { ActivityIndicator, Alert, Image, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useAuth } from '../../src/context/AuthContext';
 import { updateProfile } from '../../src/services/api';
 
 export default function ProfileScreen() {
   const colorScheme = useColorScheme();
   const { user, logout, refreshUser } = useAuth();
+  const insets = useSafeAreaInsets();
   const [isEditModalVisible, setEditModalVisible] = useState(false);
   const [editUsername, setEditUsername] = useState(user?.username || '');
   const [editEmail, setEditEmail] = useState(user?.email || '');
@@ -70,7 +71,7 @@ export default function ProfileScreen() {
         <View className="items-center mt-10 mb-8 px-6">
           <View className="relative">
             <Image
-              source={{ uri: user ? `https://ui-avatars.com/api/?name=${user.username}&background=random&color=fff&size=200` : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&h=200' }}
+              source={{ uri: user ? `https://ui-avatars.com/api/?name=${user.username}&background=random&color=fff&size=200` : 'https://cdn-icons-png.flaticon.com/512/149/149071.png' }}
               className="w-24 h-24 rounded-full border-2 border-red-600"
             />
             {user && (
@@ -129,13 +130,15 @@ export default function ProfileScreen() {
           {user && (
             <TouchableOpacity
               onPress={handleLogout}
-              className="flex-row items-center justify-center p-4 mt-8 mb-10 bg-red-600/10 rounded-2xl border border-red-600/20"
+              className="flex-row items-center justify-center p-4 mt-8 bg-red-600/10 rounded-2xl border border-red-600/20"
             >
               <LogOut size={20} color="#FF0000" />
               <Text className="text-red-600 font-bold ml-2">Log Out</Text>
             </TouchableOpacity>
           )}
         </View>
+        {/* Bottom safe area padding */}
+        <View style={{ height: insets.bottom + 20 }} />
       </ScrollView>
 
       <Modal

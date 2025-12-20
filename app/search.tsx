@@ -3,17 +3,18 @@ import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
 import { searchSeries } from '@/src/services/api';
 import { Series } from '@/src/types/content';
-import { Search as SearchIcon, X, ArrowLeft } from 'lucide-react-native';
-import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Text, TextInput, View, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import { ArrowLeft, Search as SearchIcon, X } from 'lucide-react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function SearchScreen() {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<Series[]>([]);
     const [loading, setLoading] = useState(false);
     const colorScheme = useColorScheme();
+    const insets = useSafeAreaInsets();
 
     useEffect(() => {
         const delayDebounceFn = setTimeout(async () => {
@@ -79,6 +80,7 @@ export default function SearchScreen() {
                             <AnimeCard item={item} width={160} />
                         </View>
                     )}
+                    contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
                     ListEmptyComponent={
                         query.length > 0 ? (
                             <View className="flex-1 items-center mt-20">

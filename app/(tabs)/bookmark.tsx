@@ -5,11 +5,12 @@ import { useWatchlist } from '@/src/hooks/useWatchlist';
 import { BookmarkX } from 'lucide-react-native';
 import React from 'react';
 import { ActivityIndicator, FlatList, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function BookmarkScreen() {
     const { watchlist, loading } = useWatchlist();
     const colorScheme = useColorScheme();
+    const insets = useSafeAreaInsets();
 
     if (loading) {
         return (
@@ -35,6 +36,7 @@ export default function BookmarkScreen() {
                 )}
                 className="px-2 pt-2"
                 showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
                 ListHeaderComponent={() => (
                     <View className="px-2 mb-6 mt-4 pt-16">
                         <Text className="text-white text-3xl font-extrabold tracking-tight">My Watchlist</Text>
