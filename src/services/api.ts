@@ -51,7 +51,7 @@ export const getUserDetails = async () => {
     return response.data.user;
 };
 
-export const updateProfile = async (userData: { username: string; email: string }) => {
+export const updateProfile = async (userData: { username: string }) => {
     const response = await api.put('/update-user', userData);
     return response.data;
 };

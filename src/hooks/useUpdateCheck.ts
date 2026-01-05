@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Constants from 'expo-constants';
 import { useEffect, useState } from 'react';
 
 interface GitHubRelease {
@@ -26,10 +27,10 @@ export const useUpdateCheck = (): UpdateCheckResult => {
     useEffect(() => {
         const checkForUpdates = async () => {
             // Skip update check in development to avoid rate limits and annoyance
-            // if (__DEV__) {
-            //     setLoading(false);
-            //     return;
-            // }
+            if (__DEV__) {
+                setLoading(false);
+                return;
+            }
 
             try {
                 const response = await axios.get(
@@ -38,8 +39,9 @@ export const useUpdateCheck = (): UpdateCheckResult => {
 
                 const release = response.data;
                 const latestVersion = release.tag_name.replace(/^v/, '');
-                // const currentVersion = Constants.expoConfig?.version || '1.0.0';
-                const currentVersion = "0.1.0"
+                const currentVersion = Constants.expoConfig?.version || '1.0.0';
+                // console.log(currentVersion)
+                // const currentVersion = "0.1.0"
                 if (compareVersions(latestVersion, currentVersion) > 0) {
                     setIsUpdateAvailable(true);
                     setLatestRelease(release);

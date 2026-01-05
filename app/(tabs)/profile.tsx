@@ -41,19 +41,26 @@ export default function ProfileScreen() {
   };
 
   const handleUpdateProfile = async () => {
-    if (!editUsername || !editEmail) {
-      Alert.alert('Error', 'Username and Email are required');
+    if (!editUsername) {
+      Alert.alert('Error', 'Username is required');
       return;
     }
 
     setIsUpdating(true);
     try {
-      await updateProfile({ username: editUsername, email: editEmail });
+      await updateProfile({ username: editUsername });
       if (refreshUser) await refreshUser();
       setEditModalVisible(false);
       Alert.alert('Success', 'Profile updated successfully');
     } catch (error: any) {
-      Alert.alert('Error', error.response?.data?.message || 'Failed to update profile');
+      console.error('Update Profile Error:', error);
+      let errorMessage = error.response?.data?.message || error.message || 'Failed to update profile';
+
+      if (error.response?.status === 404) {
+        errorMessage = 'Update endpoint not found. Please ensure the backend is deployed with the new route.';
+      }
+
+      Alert.alert('Error', errorMessage);
     } finally {
       setIsUpdating(false);
     }
@@ -171,12 +178,11 @@ export default function ProfileScreen() {
               <View className="mt-4">
                 <Text className="text-gray-400 mb-2 ml-1">Email</Text>
                 <TextInput
-                  className="bg-gray-800 text-white p-4 rounded-xl border border-gray-700"
+                  className="bg-gray-800/50 text-gray-400 p-4 rounded-xl border border-gray-700"
                   value={editEmail}
-                  onChangeText={setEditEmail}
+                  editable={false}
                   placeholder="Enter email"
                   placeholderTextColor="#666"
-                  keyboardType="email-address"
                 />
               </View>
 
