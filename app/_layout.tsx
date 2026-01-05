@@ -4,12 +4,14 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 import '../global.css';
 
 import { useColorScheme } from '@/components/useColorScheme';
+import { UpdateModal } from '../components/UpdateModal';
 import { AuthProvider } from '../src/context/AuthContext';
+import { useUpdateCheck } from '../src/hooks/useUpdateCheck';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -50,6 +52,14 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
+  const { isUpdateAvailable, latestRelease } = useUpdateCheck();
+  const [modalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    if (isUpdateAvailable) {
+      setModalVisible(true);
+    }
+  }, [isUpdateAvailable]);
 
   return (
     <AuthProvider>
@@ -63,6 +73,11 @@ function RootLayoutNav() {
           <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
         </Stack>
         <StatusBar style="auto" />
+        <UpdateModal
+          visible={modalVisible}
+          releaseData={latestRelease}
+          onClose={() => setModalVisible(false)}
+        />
       </ThemeProvider>
     </AuthProvider>
   );
